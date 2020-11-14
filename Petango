@@ -1,0 +1,40 @@
+
+
+
+from selenium import webdriver
+from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.support.wait import WebDriverWait
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
+from bs4 import BeautifulSoup
+import numpy as np
+
+pages = ("", '#page-2', '#page-3')
+global pet_links
+pet_links= []
+for page in pages:
+
+    page = "https://petango.com/pet_search_results?speciesId=1&breedId=undefined&location=45247&distance=10" +str(page)
+    driver = webdriver.Chrome(executable_path='/Users/paulcarson/Downloads/chromedriver')
+    driver.implicitly_wait(30)
+    driver.get(page)
+
+    page_source = driver.page_source
+    soup = BeautifulSoup(page_source, 'html.parser')
+
+    base_url = 'https://www.petango.com'
+
+    for link in soup.find_all('a'):
+        url = link.get('href')
+        if url and '/Adopt/Dog' in url:
+            pet_links.append(url)
+
+print(len(pet_links))
+print(pet_links[1])
+driver.close()
+
+
+
